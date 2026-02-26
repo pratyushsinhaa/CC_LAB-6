@@ -23,11 +23,10 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f nginx-lb || true
-                                cat > Dockerfile.nginx.local <<'EOF'
-                                FROM ubuntu:22.04
-                                RUN apt-get update && apt-get install -y nginx
-                                CMD ["nginx", "-g", "daemon off;"]
-                                EOF
+                                printf '%s\n' \
+                                    'FROM ubuntu:22.04' \
+                                    'RUN apt-get update && apt-get install -y nginx' \
+                                    'CMD ["nginx", "-g", "daemon off;"]' > Dockerfile.nginx.local
                                 docker build -t nginx-local -f Dockerfile.nginx.local .
                 docker run -d \
                   --name nginx-lb \
