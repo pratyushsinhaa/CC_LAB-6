@@ -23,15 +23,21 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f nginx-lb || true
-                
+                                cat > Dockerfile.nginx.local <<'EOF'
+                                FROM ubuntu:22.04
+                                RUN apt-get update && apt-get install -y nginx
+                                CMD ["nginx", "-g", "daemon off;"]
+                                EOF
+                                docker build -t nginx-local -f Dockerfile.nginx.local .
                 docker run -d \
                   --name nginx-lb \
                   --network app-network \
                   -p 80:80 \
-                  nginx
+                                    nginx-local
                 
                                 docker cp nginx/default.conf nginx-lb:/etc/nginx/conf.d/default.conf
                 docker exec nginx-lb nginx -s reload
+                                rm -f Dockerfile.nginx.local
                 '''
             }
         }
