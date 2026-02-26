@@ -16,6 +16,7 @@ pipeline {
                 docker rm -f backend1 backend2 || true
                 docker run -d --name backend1 --network app-network backend-app
                 docker run -d --name backend2 --network app-network backend-app
+                sleep 3
                 '''
             }
         }
@@ -33,6 +34,7 @@ pipeline {
                   --network app-network \
                                     -p 8081:80 \
                                     nginx-local
+                                sleep 2
                 
                                 docker exec nginx-lb rm -f /etc/nginx/conf.d/default.conf || true
                                 docker cp nginx/default.conf nginx-lb:/etc/nginx/sites-enabled/default
